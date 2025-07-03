@@ -1,0 +1,229 @@
+# GitLab CI/CD Pipeline for MVG Stoerung
+
+stages:
+  - lint
+  - test
+  - security
+  - build
+  - deploy
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip/
+    - venv/
+
+before_script:
+  - python --version
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
+
+# Lint stage
+lint:flake8:
+  stage: lint
+  image: python:3.11
+  script:
+    - pip install flake8
+    - flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+  allow_failure: true
+
+lint:black:
+  stage: lint
+  image: python:3.11
+  script:
+    - pip install black
+    - black --check --diff .
+  allow_failure: true
+
+lint:isort:
+  stage: lint
+  image: python:3.11
+  script:
+    - pip install isort
+    - isort --check-only --diff .
+  allow_failure: true
+
+# Test stage
+test:python3.8:
+  stage: test
+  image: python:3.8
+  script:
+    - pip install coverage pytest
+    - coverage run -m pytest test_mvg_incident_parser.py -v
+    - coverage report -m
+    - coverage xml
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    paths:
+      - coverage.xml
+    expire_in: 1 week
+
+test:python3.9:
+  stage: test
+  image: python:3.9
+  script:
+    - pip install coverage pytest
+    - coverage run -m pytest test_mvg_incident_parser.py -v
+    - coverage report -m
+
+test:python3.10:
+  stage: test
+  image: python:3.10
+  script:
+    - pip install coverage pytest
+    - coverage run -m pytest test_mvg_incident_parser.py -v
+    - coverage report -m
+
+test:python3.11:
+  stage: test
+  image: python:3.11
+  script:
+    - pip install coverage pytest
+    - coverage run -m pytest test_mvg_incident_parser.py -v
+    - coverage report -m
+
+test:python3.12:
+  stage: test
+  image: python:3.12
+  script:
+    - pip install coverage pytest
+    - coverage run -m pytest test_mvg_incident_parser.py -v
+    - coverage report -m
+
+test:integration:
+  stage: test
+  image: python:3.11
+  script:
+    - pip install coverage
+    - python3 run_all_tests.py --integration-only --verbose
+  timeout: 5 minutes
+  allow_failure: true
+
+test:full-suite:
+  stage: test
+  image: python:3.11
+  script:
+    - pip install coverage
+    - python3 run_all_tests.py --coverage --verbose
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+    paths:
+      - htmlcov/
+      - coverage.xml
+    expire_in: 1 week
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+
+# Security stage
+security:bandit:
+  stage: security
+  image: python:3.11
+  script:
+    - pip install bandit
+    - bandit -r . -f json -o bandit-report.json || true
+    - bandit -r . || true
+  artifacts:
+    paths:
+      - bandit-report.json
+    expire_in: 1 week
+  allow_failure: true
+
+security:safety:
+  stage: security
+  image: python:3.11
+  script:
+    - pip install safety
+    - safety check --json --output safety-report.json || true
+    - safety check || true
+  artifacts:
+    paths:
+      - safety-report.json
+    expire_in: 1 week
+  allow_failure: true
+
+# Build stage
+build:package:
+  stage: build
+  image: python:3.11
+  script:
+    - pip install build twine
+    - |
+      cat > setup.py << EOF
+      from setuptools import setup, find_packages
+      
+      setup(
+          name="mvg_stoerung",
+          version="1.0.0",
+          description="MVG Stoerung - Filters incidents from MVG disruption messages",
+          author="MVG Parser Team",
+          py_modules=["mvg_incident_parser"],
+          install_requires=["requests>=2.25.0"],
+          python_requires=">=3.8",
+          entry_points={
+              "console_scripts": [
+                  "mvg-stoerung=mvg_incident_parser:main",
+              ],
+          },
+          classifiers=[
+              "Development Status :: 4 - Beta",
+              "Intended Audience :: Developers",
+              "License :: OSI Approved :: MIT License",
+              "Programming Language :: Python :: 3",
+              "Programming Language :: Python :: 3.8",
+              "Programming Language :: Python :: 3.9",
+              "Programming Language :: Python :: 3.10",
+              "Programming Language :: Python :: 3.11",
+              "Programming Language :: Python :: 3.12",
+          ],
+      )
+      EOF
+    - python -m build
+    - twine check dist/*
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  only:
+    - main
+    - tags
+
+# Deploy stage (only for tags)
+deploy:pypi:
+  stage: deploy
+  image: python:3.11
+  script:
+    - pip install twine
+    - echo "Would deploy to PyPI here (configure TWINE_USERNAME and TWINE_PASSWORD)"
+    - echo "twine upload dist/*"
+  dependencies:
+    - build:package
+  only:
+    - tags
+  when: manual
+
+# Pages for coverage report
+pages:
+  stage: deploy
+  image: python:3.11
+  script:
+    - pip install coverage pytest
+    - coverage run -m pytest test_mvg_incident_parser.py
+    - coverage html
+    - mv htmlcov/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - main
