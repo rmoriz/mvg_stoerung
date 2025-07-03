@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile for MVG Incident Parser
 # Stage 1: Build and test
-FROM python:3.11-slim as builder
+FROM python:3.13-slim as builder
 
 # Set working directory
 WORKDIR /app
@@ -25,7 +25,7 @@ COPY run_*.py ./
 RUN python -m pytest test_mvg_incident_parser.py -v
 
 # Stage 2: Production image
-FROM python:3.11-slim as production
+FROM python:3.13-slim as production
 
 # Set working directory
 WORKDIR /app
