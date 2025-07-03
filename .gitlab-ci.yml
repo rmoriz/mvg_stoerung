@@ -50,9 +50,9 @@ lint:isort:
   allow_failure: true
 
 # Test stage
-test:python3.8:
+test:python3.11:
   stage: test
-  image: python:3.8
+  image: python:3.11
   script:
     - pip install coverage pytest
     - coverage run -m pytest test_mvg_incident_parser.py -v
@@ -66,38 +66,6 @@ test:python3.8:
     paths:
       - coverage.xml
     expire_in: 1 week
-
-test:python3.9:
-  stage: test
-  image: python:3.9
-  script:
-    - pip install coverage pytest
-    - coverage run -m pytest test_mvg_incident_parser.py -v
-    - coverage report -m
-
-test:python3.10:
-  stage: test
-  image: python:3.10
-  script:
-    - pip install coverage pytest
-    - coverage run -m pytest test_mvg_incident_parser.py -v
-    - coverage report -m
-
-test:python3.11:
-  stage: test
-  image: python:3.11
-  script:
-    - pip install coverage pytest
-    - coverage run -m pytest test_mvg_incident_parser.py -v
-    - coverage report -m
-
-test:python3.12:
-  stage: test
-  image: python:3.12
-  script:
-    - pip install coverage pytest
-    - coverage run -m pytest test_mvg_incident_parser.py -v
-    - coverage report -m
 
 test:integration:
   stage: test
@@ -169,7 +137,7 @@ build:package:
           author="MVG Parser Team",
           py_modules=["mvg_stoerung"],
           install_requires=["requests>=2.25.0"],
-          python_requires=">=3.8",
+          python_requires=">=3.11",
           entry_points={
               "console_scripts": [
                   "mvg-stoerung=mvg_stoerung:main",
@@ -180,11 +148,7 @@ build:package:
               "Intended Audience :: Developers",
               "License :: OSI Approved :: MIT License",
               "Programming Language :: Python :: 3",
-              "Programming Language :: Python :: 3.8",
-              "Programming Language :: Python :: 3.9",
-              "Programming Language :: Python :: 3.10",
               "Programming Language :: Python :: 3.11",
-              "Programming Language :: Python :: 3.12",
           ],
       )
       EOF
