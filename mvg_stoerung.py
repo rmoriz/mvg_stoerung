@@ -4,12 +4,13 @@ MVG API Parser - Filters incidents from MVG disruption messages
 Fetches data from https://www.mvg.de/api/bgw-pt/v3/messages and returns only INCIDENT type elements
 """
 
-import requests
 import json
-import sys
 import re
+import sys
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
+import requests
 
 
 def fetch_mvg_messages() -> Dict[str, Any]:

@@ -4,8 +4,8 @@ Test runner script for MVG Incident Parser
 Runs all unit tests and provides a summary
 """
 
-import unittest
 import sys
+import unittest
 
 
 def run_tests():

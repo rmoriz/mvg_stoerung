@@ -4,15 +4,17 @@ Comprehensive error scenario tests for MVG Incident Parser
 Tests various failure modes, edge cases, and error handling
 """
 
-import unittest
-import json
-import sys
 import io
-from unittest.mock import patch, Mock, MagicMock
-import requests
+import json
 import socket
 import ssl
-from mvg_stoerung import fetch_mvg_messages, filter_incidents, main, html_to_text, format_timestamp
+import sys
+import unittest
+from unittest.mock import MagicMock, Mock, patch
+
+import requests
+
+from mvg_stoerung import fetch_mvg_messages, filter_incidents, format_timestamp, html_to_text, main
 
 
 class TestNetworkFailures(unittest.TestCase):

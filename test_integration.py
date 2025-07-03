@@ -4,12 +4,14 @@ Integration tests for MVG Incident Parser
 Tests the full API workflow including real API calls and end-to-end functionality
 """
 
-import unittest
+import io
 import json
 import sys
-import io
-from unittest.mock import patch, Mock
+import unittest
+from unittest.mock import Mock, patch
+
 import requests
+
 from mvg_stoerung import fetch_mvg_messages, filter_incidents, main
 
 

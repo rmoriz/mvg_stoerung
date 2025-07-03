@@ -6,7 +6,8 @@ Tests HTML conversion, deduplication, and datetime formatting functions
 
 import unittest
 from datetime import datetime
-from mvg_stoerung import html_to_text, convert_html_fields, deduplicate_lines, add_human_readable_dates, format_timestamp
+
+from mvg_stoerung import add_human_readable_dates, convert_html_fields, deduplicate_lines, format_timestamp, html_to_text
 
 
 class TestHtmlToText(unittest.TestCase):
