@@ -64,7 +64,7 @@ jobs:
     - name: Test script execution
       run: |
         # Test that the script runs without errors (with timeout)
-        timeout 30s python3 mvg_incident_parser.py || echo "Script execution test completed"
+        timeout 30s python3 mvg_stoerung.py || echo "Script execution test completed"
 
   security:
     runs-on: ubuntu-latest
@@ -116,7 +116,7 @@ jobs:
 
     - name: Type checking with mypy
       run: |
-        mypy mvg_incident_parser.py --ignore-missing-imports || true
+        mypy mvg_stoerung.py --ignore-missing-imports || true
 
   build:
     needs: [test, security, code-quality]
@@ -148,7 +148,7 @@ jobs:
             author="MVG Parser Team",
             py_modules=["mvg_stoerung"],
             install_requires=["requests>=2.25.0"],
-            python_requires=">=3.8",
+            python_requires=">=3.11",
             entry_points={
                 "console_scripts": [
                     "mvg-stoerung=mvg_stoerung:main",
@@ -159,11 +159,8 @@ jobs:
                 "Intended Audience :: Developers",
                 "License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
                 "Programming Language :: Python :: 3",
-                "Programming Language :: Python :: 3.8",
-                "Programming Language :: Python :: 3.9",
-                "Programming Language :: Python :: 3.10",
                 "Programming Language :: Python :: 3.11",
-                "Programming Language :: Python :: 3.12",
+                "Programming Language :: Python :: 3.13",
             ],
         )
         EOF
