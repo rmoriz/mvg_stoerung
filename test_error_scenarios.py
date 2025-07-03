@@ -12,7 +12,7 @@ from unittest.mock import patch, Mock, MagicMock
 import requests
 import socket
 import ssl
-from mvg_incident_parser import (
+from mvg_stoerung import (
     fetch_mvg_messages,
     filter_incidents,
     main,
@@ -26,7 +26,7 @@ class TestNetworkFailures(unittest.TestCase):
     
     def test_connection_timeout(self):
         """Test connection timeout handling"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_get.side_effect = requests.Timeout("Connection timed out")
             
             with self.assertRaises(requests.Timeout):
@@ -34,7 +34,7 @@ class TestNetworkFailures(unittest.TestCase):
     
     def test_read_timeout(self):
         """Test read timeout handling"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_get.side_effect = requests.ReadTimeout("Read timed out")
             
             with self.assertRaises(requests.ReadTimeout):
@@ -42,7 +42,7 @@ class TestNetworkFailures(unittest.TestCase):
     
     def test_connection_error(self):
         """Test connection error handling"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_get.side_effect = requests.ConnectionError("Failed to establish connection")
             
             with self.assertRaises(requests.ConnectionError):
@@ -50,7 +50,7 @@ class TestNetworkFailures(unittest.TestCase):
     
     def test_dns_resolution_failure(self):
         """Test DNS resolution failure"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_get.side_effect = socket.gaierror("Name or service not known")
             
             with self.assertRaises(socket.gaierror):
@@ -58,7 +58,7 @@ class TestNetworkFailures(unittest.TestCase):
     
     def test_ssl_certificate_error(self):
         """Test SSL certificate verification failure"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_get.side_effect = requests.exceptions.SSLError("SSL certificate verification failed")
             
             with self.assertRaises(requests.exceptions.SSLError):
@@ -66,7 +66,7 @@ class TestNetworkFailures(unittest.TestCase):
     
     def test_too_many_redirects(self):
         """Test too many redirects error"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_get.side_effect = requests.TooManyRedirects("Exceeded 30 redirects")
             
             with self.assertRaises(requests.TooManyRedirects):
@@ -74,7 +74,7 @@ class TestNetworkFailures(unittest.TestCase):
     
     def test_proxy_error(self):
         """Test proxy connection error"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_get.side_effect = requests.exceptions.ProxyError("Cannot connect to proxy")
             
             with self.assertRaises(requests.exceptions.ProxyError):
@@ -86,7 +86,7 @@ class TestHTTPErrors(unittest.TestCase):
     
     def test_404_not_found(self):
         """Test 404 Not Found response"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.side_effect = requests.HTTPError("404 Client Error: Not Found")
             mock_get.return_value = mock_response
@@ -96,7 +96,7 @@ class TestHTTPErrors(unittest.TestCase):
     
     def test_500_internal_server_error(self):
         """Test 500 Internal Server Error"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.side_effect = requests.HTTPError("500 Server Error: Internal Server Error")
             mock_get.return_value = mock_response
@@ -106,7 +106,7 @@ class TestHTTPErrors(unittest.TestCase):
     
     def test_503_service_unavailable(self):
         """Test 503 Service Unavailable"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.side_effect = requests.HTTPError("503 Server Error: Service Unavailable")
             mock_get.return_value = mock_response
@@ -116,7 +116,7 @@ class TestHTTPErrors(unittest.TestCase):
     
     def test_429_rate_limit_exceeded(self):
         """Test 429 Too Many Requests"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.side_effect = requests.HTTPError("429 Client Error: Too Many Requests")
             mock_get.return_value = mock_response
@@ -126,7 +126,7 @@ class TestHTTPErrors(unittest.TestCase):
     
     def test_403_forbidden(self):
         """Test 403 Forbidden response"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.side_effect = requests.HTTPError("403 Client Error: Forbidden")
             mock_get.return_value = mock_response
@@ -140,7 +140,7 @@ class TestMalformedAPIResponses(unittest.TestCase):
     
     def test_invalid_json_syntax(self):
         """Test invalid JSON syntax"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.return_value = None
             mock_response.json.side_effect = json.JSONDecodeError("Expecting ',' delimiter", "", 10)
@@ -151,7 +151,7 @@ class TestMalformedAPIResponses(unittest.TestCase):
     
     def test_truncated_json(self):
         """Test truncated JSON response"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.return_value = None
             mock_response.json.side_effect = json.JSONDecodeError("Unterminated string", "", 50)
@@ -162,7 +162,7 @@ class TestMalformedAPIResponses(unittest.TestCase):
     
     def test_empty_response_body(self):
         """Test empty response body"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.return_value = None
             mock_response.json.side_effect = json.JSONDecodeError("Expecting value", "", 0)
@@ -173,7 +173,7 @@ class TestMalformedAPIResponses(unittest.TestCase):
     
     def test_non_json_content_type(self):
         """Test non-JSON content type response"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.return_value = None
             mock_response.json.side_effect = json.JSONDecodeError("Expecting value", "", 0)
@@ -185,7 +185,7 @@ class TestMalformedAPIResponses(unittest.TestCase):
     
     def test_null_response(self):
         """Test null JSON response"""
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.return_value = None
             
             incidents = filter_incidents(None)
@@ -375,7 +375,7 @@ class TestMainFunctionErrorHandling(unittest.TestCase):
     
     def test_main_with_network_error(self):
         """Test main function with network error"""
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.side_effect = requests.ConnectionError("Network error")
             
             captured_stderr = io.StringIO()
@@ -391,7 +391,7 @@ class TestMainFunctionErrorHandling(unittest.TestCase):
     
     def test_main_with_json_error(self):
         """Test main function with JSON decode error"""
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.side_effect = json.JSONDecodeError("Invalid JSON", "", 0)
             
             captured_stderr = io.StringIO()
@@ -407,7 +407,7 @@ class TestMainFunctionErrorHandling(unittest.TestCase):
     
     def test_main_with_unexpected_exception(self):
         """Test main function with unexpected exception"""
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.side_effect = ValueError("Unexpected error")
             
             captured_stderr = io.StringIO()

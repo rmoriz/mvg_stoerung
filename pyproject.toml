@@ -44,15 +44,15 @@ dev = [
 ]
 
 [project.scripts]
-mvg-stoerung = "mvg_incident_parser:main"
+mvg-stoerung = "mvg_stoerung:main"
 
 [project.urls]
-Homepage = "https://github.com/your-org/mvg_stoerung"
-Repository = "https://github.com/your-org/mvg_stoerung.git"
-Issues = "https://github.com/your-org/mvg_stoerung/issues"
+Homepage = "https://github.com/rmoriz/mvg_stoerung"
+Repository = "https://github.com/rmoriz/mvg_stoerung.git"
+Issues = "https://github.com/rmoriz/mvg_stoerung/issues"
 
 [tool.setuptools]
-py-modules = ["mvg_incident_parser"]
+py-modules = ["mvg_stoerung"]
 
 [tool.black]
 line-length = 127

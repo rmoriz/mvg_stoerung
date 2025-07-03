@@ -10,7 +10,7 @@ import sys
 import io
 from unittest.mock import patch, Mock
 import requests
-from mvg_incident_parser import (
+from mvg_stoerung import (
     fetch_mvg_messages,
     filter_incidents,
     main
@@ -50,7 +50,7 @@ class TestMVGAPIIntegration(unittest.TestCase):
     
     def test_api_timeout_handling(self):
         """Test API timeout handling"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_get.side_effect = requests.Timeout("Connection timeout")
             
             with self.assertRaises(requests.Timeout):
@@ -58,7 +58,7 @@ class TestMVGAPIIntegration(unittest.TestCase):
     
     def test_api_http_error_handling(self):
         """Test HTTP error handling"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.side_effect = requests.HTTPError("404 Not Found")
             mock_get.return_value = mock_response
@@ -68,7 +68,7 @@ class TestMVGAPIIntegration(unittest.TestCase):
     
     def test_api_json_decode_error(self):
         """Test JSON decode error handling"""
-        with patch('mvg_incident_parser.requests.get') as mock_get:
+        with patch('mvg_stoerung.requests.get') as mock_get:
             mock_response = Mock()
             mock_response.raise_for_status.return_value = None
             mock_response.json.side_effect = json.JSONDecodeError("Invalid JSON", "", 0)
@@ -120,7 +120,7 @@ class TestEndToEndWorkflow(unittest.TestCase):
     
     def test_complete_workflow_with_mock_data(self):
         """Test complete workflow from API call to final output"""
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.return_value = self.sample_api_response
             
             # Test the filtering and processing
@@ -154,7 +154,7 @@ class TestEndToEndWorkflow(unittest.TestCase):
     
     def test_main_function_with_mock(self):
         """Test the main function with mocked API response"""
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.return_value = self.sample_api_response
             
             # Capture stdout and stderr
@@ -197,7 +197,7 @@ class TestErrorScenarios(unittest.TestCase):
     
     def test_network_error_handling(self):
         """Test network connectivity issues"""
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.side_effect = requests.ConnectionError("Network unreachable")
             
             captured_stderr = io.StringIO()
@@ -211,7 +211,7 @@ class TestErrorScenarios(unittest.TestCase):
     
     def test_empty_api_response(self):
         """Test handling of empty API response"""
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.return_value = {"messages": []}
             
             captured_stdout = io.StringIO()
@@ -230,7 +230,7 @@ class TestErrorScenarios(unittest.TestCase):
     
     def test_malformed_api_response(self):
         """Test handling of malformed API response"""
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             # Return unexpected structure
             mock_fetch.return_value = {"unexpected": "structure"}
             
@@ -267,7 +267,7 @@ class TestErrorScenarios(unittest.TestCase):
             ]
         }
         
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.return_value = corrupted_response
             
             captured_stdout = io.StringIO()
@@ -297,7 +297,7 @@ class TestDataValidation(unittest.TestCase):
             ]
         }
         
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.return_value = unicode_response
             
             captured_stdout = io.StringIO()
@@ -329,7 +329,7 @@ class TestDataValidation(unittest.TestCase):
             ]
         }
         
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.return_value = large_response
             
             captured_stdout = io.StringIO()
@@ -363,7 +363,7 @@ class TestDataValidation(unittest.TestCase):
             ]
         }
         
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.return_value = extreme_response
             
             captured_stdout = io.StringIO()
@@ -402,7 +402,7 @@ class TestPerformance(unittest.TestCase):
             ]
         }
         
-        with patch('mvg_incident_parser.fetch_mvg_messages') as mock_fetch:
+        with patch('mvg_stoerung.fetch_mvg_messages') as mock_fetch:
             mock_fetch.return_value = large_response
             
             start_time = time.time()

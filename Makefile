@@ -101,12 +101,12 @@ build: clean
 # Run the parser
 run:
 	@echo "🚀 Running MVG incident parser..."
-	python3 mvg_incident_parser.py
+	python3 mvg_stoerung.py
 
 # Integration test
 test-integration:
 	@echo "🔗 Running integration test..."
-	timeout 30s python3 mvg_incident_parser.py || echo "Integration test completed"
+	timeout 30s python3 mvg_stoerung.py || echo "Integration test completed"
 
 # Docker targets
 docker-build:

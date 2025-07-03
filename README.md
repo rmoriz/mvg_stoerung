@@ -11,17 +11,17 @@ This script fetches data from the MVG (Münchner Verkehrsgesellschaft) API and f
 pip install -r requirements.txt
 
 # Run the parser
-python3 mvg_incident_parser.py
+python3 mvg_stoerung.py
 ```
 
 ### Docker Usage
 
 ```bash
 # Pull the latest image from GitHub Container Registry
-docker pull ghcr.io/your-org/mvg_stoerung:latest
+docker pull ghcr.io/rmoriz/mvg_stoerung:latest
 
 # Run the container
-docker run --rm ghcr.io/your-org/mvg_stoerung:latest
+docker run --rm ghcr.io/rmoriz/mvg_stoerung:latest
 
 # Build locally
 docker build -t mvg_stoerung .

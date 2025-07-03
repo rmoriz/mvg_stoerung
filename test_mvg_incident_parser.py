@@ -6,7 +6,7 @@ Tests HTML conversion, deduplication, and datetime formatting functions
 
 import unittest
 from datetime import datetime
-from mvg_incident_parser import (
+from mvg_stoerung import (
     html_to_text,
     convert_html_fields,
     deduplicate_lines,

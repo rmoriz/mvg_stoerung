@@ -17,7 +17,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 # Copy source code
-COPY mvg_incident_parser.py .
+COPY mvg_stoerung.py .
 COPY test_*.py ./
 COPY run_*.py ./
 
@@ -42,7 +42,7 @@ RUN apt-get update && apt-get install -y \
 COPY --from=builder /root/.local /home/mvguser/.local
 
 # Copy application files
-COPY mvg_incident_parser.py .
+COPY mvg_stoerung.py .
 
 # Set up PATH for user-installed packages
 ENV PATH=/home/mvguser/.local/bin:$PATH
@@ -55,16 +55,16 @@ USER mvguser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python mvg_incident_parser.py > /dev/null 2>&1 || exit 1
+    CMD python mvg_stoerung.py > /dev/null 2>&1 || exit 1
 
 # Set default command
-ENTRYPOINT ["python", "mvg_incident_parser.py"]
+ENTRYPOINT ["python", "mvg_stoerung.py"]
 
 # Metadata
 LABEL org.opencontainers.image.title="MVG Stoerung"
 LABEL org.opencontainers.image.description="Fetches and processes incident data from MVG (Munich Public Transport) API"
 LABEL org.opencontainers.image.version="1.0.0"
 LABEL org.opencontainers.image.authors="MVG Parser Team"
-LABEL org.opencontainers.image.url="https://github.com/your-org/mvg_stoerung"
-LABEL org.opencontainers.image.source="https://github.com/your-org/mvg_stoerung"
+LABEL org.opencontainers.image.url="https://github.com/rmoriz/mvg_stoerung"
+LABEL org.opencontainers.image.source="https://github.com/rmoriz/mvg_stoerung"
 LABEL org.opencontainers.image.licenses="CC0-1.0"

@@ -146,12 +146,12 @@ jobs:
             version="1.0.0",
             description="MVG Stoerung - Filters incidents from MVG disruption messages",
             author="MVG Parser Team",
-            py_modules=["mvg_incident_parser"],
+            py_modules=["mvg_stoerung"],
             install_requires=["requests>=2.25.0"],
             python_requires=">=3.8",
             entry_points={
                 "console_scripts": [
-                    "mvg-stoerung=mvg_incident_parser:main",
+                    "mvg-stoerung=mvg_stoerung:main",
                 ],
             },
             classifiers=[
